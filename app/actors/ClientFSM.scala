@@ -95,8 +95,13 @@ when(UploadingResults)
       }
   }
 
-  when(Dirty)
+  when(Dirty, stateTimeout = 10 seconds)
   {
+    case Event(StateTimeout,_) =>
+      Runtime.getRuntime().exec("shutdown -r -t 10")
+      stop(FSM.Shutdown)
+
+
     case Event(e, s) =>
       {
         stay
