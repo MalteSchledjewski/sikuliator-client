@@ -2,7 +2,7 @@ package actors
 
 import java.io.File
 
-import actors.WorkFetcherActor.FetchInitialWork
+import actors.WorkFetcherActor.{Mapping, FetchInitialWork}
 import akka.actor.{Props, ActorRef, FSM}
 import play.api.Logger
 import play.api.libs.ws.WSClient
@@ -20,7 +20,7 @@ case object Dirty extends State
 
 sealed trait Data
 case object Uninitialized extends Data
-final case class Work(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long, spec:String) extends Data
+final case class Work(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long, spec:String, referenceImageMapping : Seq[Mapping], sequenceVersions : Seq[Mapping]) extends Data
 final case class Result(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long, success : Boolean, message:String, image : File) extends Data
 final case class ExecutionStep(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long) extends Data
 final case class ErrorMessage(message :String) extends Data
@@ -31,7 +31,7 @@ final case class ErrorMessage(message :String) extends Data
 object ClientFSM {
   def props = Props[ClientFSM]
   // events
-  final case class work(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long, spec:String)
+  final case class work(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long, spec:String, referenceImageMapping : Seq[Mapping], sequenceVersions : Seq[Mapping])
   final case class no_work()
   final case class executed(success : Boolean, message:String, image : File)
   final case class errorHappened(message :String)
@@ -67,7 +67,7 @@ class ClientFSM  extends FSM[State, Data]{
       {
         Console.println("Go to Executing")
         testExecuter ! newWork
-        goto(Executing) using (Work(newWork.executionId,newWork.testId,newWork.testVersionId, newWork.executionStep,newWork.spec))
+        goto(Executing) using Work(newWork.executionId, newWork.testId, newWork.testVersionId, newWork.executionStep, newWork.spec, newWork.referenceImageMapping, newWork.sequenceVersions)
       }
   }
 
@@ -77,7 +77,7 @@ class ClientFSM  extends FSM[State, Data]{
       {
         // start uploading
         val result = new Result(work.executionId,work.testId,work.testVersionId,work.executionStep,exe.success,exe.message,exe.image)
-        uploader ! result //new StartUpload(work.executionId,work.testId,work.testVersionId,work.executionStep,exe.success,exe.image)
+        uploader ! result
         goto(UploadingResults) using result
       }
   }

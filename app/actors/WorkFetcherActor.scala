@@ -3,7 +3,7 @@ package actors
 import javax.inject.Inject
 import actors.ClientFSM.{work, no_work}
 import play.api.Logger
-import play.api.libs.json.JsValue
+import play.api.libs.json.{Json, JsValue}
 import play.api.libs.ws
 import play.api.Play.current
 import scala.concurrent.Future
@@ -28,29 +28,26 @@ object WorkFetcherActor
 {
   def props = Props[WorkFetcherActor]
   final case class FetchInitialWork()
-
-//  def createRequest(url :String) : WSRequest =
-//  {
-//    WS.url(url)
-//  }
+  final case class Mapping(name:String, url: String)
+  implicit val format = Json.format[Mapping]
 }
 //@Inject() (ws: WSClient)
 
 class WorkFetcherActor  extends Actor {
   import WorkFetcherActor._
 
-  val wsClient = NingWSClient()
-
-  override def postStop() {
-    wsClient.close()
-  }
+//  val wsClient = NingWSClient()
+//
+//  override def postStop() {
+//    wsClient.close()
+//  }
 
   override def receive: Receive =
   {
     case FetchInitialWork() =>
       {
         val fsm = sender()
-        val request: WSRequest = wsClient.url("http://localhost:9000/getWork")
+        val request: WSRequest = WS.url("http://localhost:9000/getWork")
         request.get().map(
           response =>
             {
@@ -67,7 +64,9 @@ class WorkFetcherActor  extends Actor {
                     val testVersionId : Long =( work \ "testVersionId" ).as[Long]
                     val executionStep : Long =( work \ "executionStep" ).as[Long]
                     val spec : String =( work \ "spec" ).as[String]
-                    fsm ! new work(executionId, testId , testVersionId , executionStep, spec)
+                    val referenceImageMapping =( work \ "referenceImages" ).as[Seq[Mapping]]
+                    val sequenceVersions =( work \ "sequenceVersions" ).as[Seq[Mapping]]
+                    fsm ! new work(executionId, testId , testVersionId , executionStep, spec,referenceImageMapping, sequenceVersions)
                   }
               }
             }

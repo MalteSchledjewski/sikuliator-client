@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.4.1",
   "com.typesafe.akka" %% "akka-slf4j" % "2.4.1",
   "com.ning" % "async-http-client" % "1.9.33",
-//  "com.sikulix" % "sikulixapi" % "1.1.0",
+//  "com.sikulix" % "sikulixapi" % "1.1.0", //has profiles which are not supported by sbt
   "com.sikulix" % "sikulixlibswin" % "1.1.0",
   "commons-cli" % "commons-cli" % "1.2",
   "org.apache.commons" % "commons-exec" % "1.3",
@@ -23,7 +23,6 @@ libraryDependencies ++= Seq(
   "jxgrabkey" % "jxgrabkey" % "1.0",
   "org.swinglabs" % "swing-layout" % "1.0.3",
   "com.nativelibs4java" % "bridj" % "0.6.2"
-   //  "org.slf4j" % "slf4j-nop" % "1.6.4"
 )
 //resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"

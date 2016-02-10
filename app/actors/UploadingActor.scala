@@ -24,18 +24,12 @@ import scala.util.{Success, Failure}
   */
 object UploadingActor {
   def props = Props[UploadingActor]
-
-//  final case class StartUpload(executionId : Long, testId : Long, testVersionId : Long, executionStep: Long, success : Boolean, image : java.nio.ByteBuffer)
 }
 
 class UploadingActor  extends Actor{
-  import UploadingActor._
-  val wsClient = NingWSClient()
+
   val fullUrl = "http://localhost:9000/projects/1/resultImages"
 
-  override def postStop() {
-    wsClient.close()
-  }
 
   override def receive: Receive =
   {
@@ -54,7 +48,7 @@ class UploadingActor  extends Actor{
                 fsm ! errorHappened("upload failed returned body was: " + resp.body)
               case Some(url) =>
                 {
-                  val request: WSRequest = wsClient.url("http://localhost:9000/postResult")
+                  val request: WSRequest = WS.url("http://localhost:9000/postResult")
                   val parts : List[Part] = List(
                     new StringPart("url", "http://localhost:9000"+url),
                     new StringPart("executionId", upload.executionId.toString),
@@ -97,9 +91,7 @@ class UploadingActor  extends Actor{
             }
 
           }
-          //              response.body
         }
-
       }
   }
 
