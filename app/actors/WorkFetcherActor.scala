@@ -41,6 +41,10 @@ class WorkFetcherActor  extends Actor {
 
   val wsClient = NingWSClient()
 
+  override def postStop() {
+    wsClient.close()
+  }
+
   override def receive: Receive =
   {
     case FetchInitialWork() =>

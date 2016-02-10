@@ -33,12 +33,16 @@ class UploadingActor  extends Actor{
   val wsClient = NingWSClient()
   val fullUrl = "http://localhost:9000/projects/1/resultImages"
 
+  override def postStop() {
+    wsClient.close()
+  }
+
   override def receive: Receive =
   {
     case upload : Result =>
       {
         val fsm = sender()
-        postMultipart(fullUrl, "resultImage", upload.image, "image/png", "" + upload.executionId + " " + upload.testId).onComplete {
+        postMultipart(fullUrl, "resultImage", upload.image, "image/png", "" + upload.executionId + " " + upload.testId+ "").onComplete {
           case Failure(e) => {
             fsm ! errorHappened("upload failed")
           }

@@ -14,11 +14,20 @@ libraryDependencies ++= Seq(
   ws,
   "com.typesafe.akka" %% "akka-actor" % "2.4.1",
   "com.typesafe.akka" %% "akka-slf4j" % "2.4.1",
-  "com.ning" % "async-http-client" % "1.9.33"
-  //  "org.slf4j" % "slf4j-nop" % "1.6.4"
+  "com.ning" % "async-http-client" % "1.9.33",
+//  "com.sikulix" % "sikulixapi" % "1.1.0",
+  "com.sikulix" % "sikulixlibswin" % "1.1.0",
+  "commons-cli" % "commons-cli" % "1.2",
+  "org.apache.commons" % "commons-exec" % "1.3",
+  "com.melloware" % "jintellitype" % "1.3.7",
+  "jxgrabkey" % "jxgrabkey" % "1.0",
+  "org.swinglabs" % "swing-layout" % "1.0.3",
+  "com.nativelibs4java" % "bridj" % "0.6.2"
+   //  "org.slf4j" % "slf4j-nop" % "1.6.4"
 )
 //resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers += "unidue" at "http://mvn.is.inf.uni-due.de:8081/nexus/content/repositories/atunes-dependencies/"
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
